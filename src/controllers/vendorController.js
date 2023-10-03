@@ -34,30 +34,24 @@ const addVendor = async (req, res) => {
             ifsc,
             termsAndConditions,
         } = data;
-        if (password) {
-            password = await bcrypt.hash(password, 10);
+        if (password === "") {
+            return res.status(400).send({ message: "Password is required", status: false });
         }
-        let isVendor = null;
-        if (emailId) {
-            isVendor = await vendorModel.findOne({ emailId: emailId });
-        }
-        if (mobileNo) {
-            let x = await vendorModel.findOne({ mobileNo: mobileNo });
-            if (x) {
-                return res.status(400).send({ message: "Mobile number already exists", status: false });
-            }
-        }
+        password = await bcrypt.hash(password, 10);
+
+        let isVendor = await vendorModel.find({ emailId: emailId });
         if (isVendor) {
             return res.status(400).send({ message: "Email id already exists", status: false });
         }
-
-        let documentData = {};
-        if (req.files && req.files.gstRegDoc) {
-            documentData.gstRegDoc = await uploadFile(req.files.gstRegDoc);
-        }
-        if (req.files && req.files.brandRegDoc) {
-            documentData.brandRegDoc = await uploadFile(req.files.brandRegDoc);
-        }
+        // console.log(data);
+        let gstRegDoc = await uploadFile(req.files.gstRegDoc);
+        let brandLogo = await uploadFile(req.files.brandLogo);
+        let brandRegDoc = await uploadFile(req.files.brandRegDoc);
+        let cancelledCheque = await uploadFile(req.files.cancelledCheque);
+        let documentData = {
+            brandRegDoc: brandRegDoc,
+            gstRegDoc: gstRegDoc,
+        };
 
         let bankData = {
             acHolderName: acHolderName,
@@ -65,82 +59,47 @@ const addVendor = async (req, res) => {
             bankName: bankName,
             branch: branch,
             ifsc: ifsc,
+            cancelledCheque: cancelledCheque,
         };
-        if (req.files && req.files.cancelledCheque) {
-            bankData.cancelledCheque = await uploadFile(req.files.cancelledCheque);
-        }
+
         let brandData = {
             brand_name: brandName,
+            brandLogo: brandLogo,
         };
-        if (req.files && req.files.brandLogo) {
-            brandData.brandLogo = await uploadFile(req.files.brandLogo);
-        }
-        let vendorData = {};
-        if (firmName) {
-            vendorData.firmName = firmName;
-        }
-        if (gstNo) {
-            vendorData.gstNo = gstNo;
-        }
-        if (representativeName) {
-            vendorData.representativeName = representativeName;
-        }
-        if (emailId) {
-            vendorData.emailId = emailId;
-        }
-        if (password) {
-            vendorData.password = password;
-        }
-        if (mobileNo) {
-            vendorData.mobileNo = mobileNo;
-        }
-        if (altMobileNo) {
-            vendorData.altMobileNo = altMobileNo;
-        }
-        if (pickupState) {
-            vendorData.pickupState = pickupState;
-        }
-        if (pickupCity) {
-            vendorData.pickupCity = pickupCity;
-        }
-        if (pickupPincode) {
-            vendorData.pickupPincode = pickupPincode;
-        }
-        if (invoiceAddress) {
-            vendorData.invoiceAddress = invoiceAddress;
-        }
-        if (termsAndConditions) {
-            vendorData.termsAndConditions = termsAndConditions;
-        }
-        if (pickupAddress) {
-            vendorData.pickupAddress = pickupAddress;
-        }
-        let brand = null;
-        if (brandData.brand_name) {
-            brand = await brandModel.create(brandData);
-            vendorData.brand_id = brand;
-        }
-        if (bankData.acNo && bankData.acHolderName) {
-            let bank = await bankModel.create(bankData);
-            vendorData.bank_id = bank;
-        }
-        if (documentData.gstRegDoc || documentData.brandRegDoc) {
-            let document = await documentModel.create(documentData);
-            vendorData.document_id = document;
-        }
+        let vendorData = {
+            firmName,
+            gstNo,
+            representativeName,
+            emailId,
+            password,
+            mobileNo,
+            altMobileNo,
+            pickupState,
+            pickupCity,
+            pickupPincode,
+            invoiceAddress,
+            pickupAddress,
+            termsAndConditions,
+        };
 
+        let document = await documentModel.create(documentData);
+        let bank = await bankModel.create(bankData);
+        let brand = await brandModel.create(brandData);
+
+        vendorData.bank_id = bank;
+        vendorData.document_id = document;
+        vendorData.brand_id = brand;
         vendorData.vendor_unique_id = generateRandomID(10);
         vendorData.auth_unique_id = generateRandomID(10);
         vendorData.db_unique_id = generateRandomAlphaNumericID(20);
         vendorData.sharing_unique_id = generateRandomAlphaNumericID(20);
+        // console.log(vendorData);
         vendorData.role = ["VENDOR"];
 
         let vendor = await vendorModel.create(vendorData);
-        if (brand) {
-            brand.vendor_id = vendor;
-            await brand.save();
-        }
-        return res.status(201).send({ status: true, message: "You have successfully registered" });
+        brand.vendor_id = vendor;
+        await brand.save();
+        return res.status(201).send({ status: true, message: "Success" });
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message });
     }
@@ -324,39 +283,6 @@ const updateVendor = async (req, res) => {
                     brandX.brand_name = brand_name;
                     await brandX.save();
                 }
-            }
-        }
-        if (acHolderName && acNo) {
-            if (!bank_id) {
-                let bank = await bankModel.create({ acNo, acHolderName });
-                if (bankName) {
-                    bank.bankName = bankName;
-                }
-                if (branch) {
-                    bank.branch = branch;
-                }
-                if (ifsc) {
-                    bank.ifsc = ifsc;
-                }
-                vendor.bank_id = bank._id;
-                await bank.save();
-            } else {
-                if (bankName) {
-                    vendor.bank_id.bankName = bankName;
-                }
-                if (acHolderName) {
-                    vendor.bank_id.acHolderName = acHolderName;
-                }
-                if (acNo) {
-                    vendor.bank_id.acNo = acNo;
-                }
-                if (branch) {
-                    vendor.bank_id.branch = branch;
-                }
-                if (ifsc) {
-                    vendor.bank_id.ifsc = ifsc;
-                }
-                await vendor.bank_id.save();
             }
         }
         if (bank_id) {

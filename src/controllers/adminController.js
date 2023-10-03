@@ -248,11 +248,6 @@ const verifyVendor = async (req, res) => {
         if (vendorStatus === "Approved") {
             if (vendorMargin) {
                 vendorObj.marginInPercentage = vendorMargin;
-            } else {
-                return res.status(400).send({ status: false, message: "Vendor margin required for approve" });
-            }
-            if (!vendorObj.brand_id) {
-                return res.status(400).send({ status: false, message: "Update vendor's brand details first" });
             }
             vendorObj.status = vendorStatus;
             vendorObj.actionTakenBy = req.userId;
