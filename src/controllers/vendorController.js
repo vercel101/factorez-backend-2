@@ -39,7 +39,7 @@ const addVendor = async (req, res) => {
         }
         password = await bcrypt.hash(password, 10);
 
-        let isVendor = await vendorModel.find({ emailId: emailId });
+        let isVendor = await vendorModel.findOne({ emailId: emailId });
         if (isVendor) {
             return res.status(400).send({ message: "Email id already exists", status: false });
         }
