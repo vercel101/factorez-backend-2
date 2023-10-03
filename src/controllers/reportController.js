@@ -4,7 +4,7 @@ const orderModel = require("../models/orderModel");
 const getOrderReport = async (req, res) => {
     try {
         //{ saleInvoice: { $exists: true } }
-        let orders = await orderModel.find().populate(["payment_id","order_status_id"]);
+        let orders = await orderModel.find({ saleInvoice: { $exists: true } }).populate(["payment_id", "order_status_id"]);
         return res.status(200).send({ status: true, message: "Order Report fetched...", data: orders });
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message });
@@ -175,12 +175,12 @@ const updatePaymentReport = async (req, res) => {
         if (!order) {
             return res.status(400).send({ status: false, message: "Order id not found" });
         }
-        if(paymentStatus)order.paymentReportStatus.paymentStatus = paymentStatus;
-        if(paidAmount)order.paymentReportStatus.paidAmount = paidAmount;
-        if(paymentDate)order.paymentReportStatus.paymentDate = paymentDate;
-        if(transactionId)order.paymentReportStatus.transactionId = transactionId;
-        if(settlementAmt)order.paymentReportStatus.settlementAmt = settlementAmt;
-        if(message)order.paymentReportStatus.message = message;
+        if (paymentStatus) order.paymentReportStatus.paymentStatus = paymentStatus;
+        if (paidAmount) order.paymentReportStatus.paidAmount = paidAmount;
+        if (paymentDate) order.paymentReportStatus.paymentDate = paymentDate;
+        if (transactionId) order.paymentReportStatus.transactionId = transactionId;
+        if (settlementAmt) order.paymentReportStatus.settlementAmt = settlementAmt;
+        if (message) order.paymentReportStatus.message = message;
         data.updateAt = new Date();
         order.paymentReportStatus.logs.push(data);
         await order.save();
