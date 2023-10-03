@@ -148,13 +148,13 @@ const adminLogin = async (req, res) => {
         if (!isValid(password)) {
             return res.status(400).send({ status: false, message: "password is required" });
         }
-        const EmailRegex = /^\w+([\.]?\w+)*@\w+([\.]?\w+)*(\.\w{2,3})+$/;
-        const UserIDReges = /^[0-9]{8,14}$/;
-        const PasswordRegex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{10,20}$/;
+        // const EmailRegex = /^\w+([\.]?\w+)*@\w+([\.]?\w+)*(\.\w{2,3})+$/;
+        // const UserIDReges = /^[0-9]{8,14}$/;
+        // const PasswordRegex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{10,20}$/;
 
-        if ((!EmailRegex.test(email) && !UserIDReges.test(email)) || !PasswordRegex.test(password)) {
-            return res.status(400).send({ status: false, message: "Please provide valid Credentials" });
-        }
+        // if ((!EmailRegex.test(email) && !UserIDReges.test(email)) || !PasswordRegex.test(password)) {
+        //     return res.status(400).send({ status: false, message: "Please provide valid Credentials" });
+        // }
         let user = null;
         if (email.includes("@")) {
             user = await adminModel.findOne({ email: email, isDeleted: false });
@@ -165,7 +165,7 @@ const adminLogin = async (req, res) => {
             user = await vendorModel.findOne({ vendor_unique_id: email });
         }
         if (!user) {
-            return res.status(400).send({ status: false, message: "Please feed a valid credentials" });
+            return res.status(400).send({ status: false, message: "Invalid Email id or Username" });
         }
         bcrypt.compare(password, user.password, function (err, result) {
             if (err) {
@@ -222,11 +222,11 @@ const adminLogin = async (req, res) => {
                 res.setHeader("Authorization", "Bearer", token);
                 return res.status(200).send({
                     status: false,
-                    message: "Successfully loggedin",
+                    message: "Successfully logged in",
                     data: data,
                 });
             } else {
-                return res.status(401).send({ status: false, message: "Login denied" });
+                return res.status(401).send({ status: false, message: "Incorrect Password" });
             }
         }
     } catch (error) {
