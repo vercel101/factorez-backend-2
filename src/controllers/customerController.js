@@ -125,7 +125,7 @@ const updateCustomerById = async (req, res) => {
             customer.alternate_phone = alternate_phone;
         }
         if (email) {
-            customer.email = email;
+            customer.email = email.toLowerCase();
         }
         if (password) {
             let hashedPassword = await bcrypt.hash(password, 10);

@@ -42,7 +42,7 @@ const addAdmin = async (req, res) => {
         password = hashedPassword;
         let data = {
             name,
-            email,
+            email: email.toLowerCase(),
             password,
             role,
             phone,
@@ -71,7 +71,7 @@ const updateAdminInfo = async (req, res) => {
             return res.status(400).send({ status: false, message: "Bad request" });
         }
         if (phone) admin.phone = phone;
-        if (email) admin.email = email;
+        if (email) admin.email = email.toLowerCase();
         if (name) admin.name = name;
         if (role) admin.role = role;
         if (password) {
@@ -115,7 +115,7 @@ const createSuperAdmin = async (req, res) => {
             password = hashedPassword;
             let data = {
                 name,
-                email,
+                email: email.toLowerCase(),
                 password,
                 role: ["ADMIN"],
                 phone,
@@ -157,9 +157,9 @@ const adminLogin = async (req, res) => {
         // }
         let user = null;
         if (email.includes("@")) {
-            user = await adminModel.findOne({ email: email, isDeleted: false });
+            user = await adminModel.findOne({ email: email.toLowerCase(), isDeleted: false });
             if (!user) {
-                user = await vendorModel.findOne({ emailId: email });
+                user = await vendorModel.findOne({ emailId: email.toLowerCase() });
             }
         } else {
             user = await vendorModel.findOne({ vendor_unique_id: email });

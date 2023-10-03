@@ -70,7 +70,7 @@ const addVendor = async (req, res) => {
             firmName,
             gstNo,
             representativeName,
-            emailId,
+            emailId: emailId.toLowerCase(),
             password,
             mobileNo,
             altMobileNo,
@@ -168,7 +168,7 @@ const createVendorByAdmin = async (req, res) => {
             firmName,
             gstNo,
             representativeName,
-            emailId,
+            emailId: emailId.toLowerCase(),
             password,
             mobileNo,
             altMobileNo,
@@ -247,7 +247,7 @@ const updateVendor = async (req, res) => {
             vendor.representativeName = representativeName;
         }
         if (emailId) {
-            vendor.emailId = emailId;
+            vendor.emailId = emailId.toLowerCase();
         }
         if (password) {
             vendor.password = await bcrypt.hash(password, 10);
