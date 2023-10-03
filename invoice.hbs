@@ -1,0 +1,187 @@
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+        <title>Invoice PDF</title>
+        <style>
+            tr{page-break-inside: avoid; page-break-after: auto;} body, h1, h2, h3, h4, h5, h6, span, p { margin: 0; padding: 0; } .page { width: 21cm; padding: 10px; background:
+            white; } .brandName { font-family: "Inter", sans-serif; padding-right: 10px; } .heading { font-family: "Inter", sans-serif; text-align: center; font-weight: 700;
+            font-size: 20px; margin-top: 5px; border: 1px solid black; } .sold-by-box { font-family: "Inter", sans-serif; padding: 10px; } .address { font-size: 12px; font-style:
+            italic; } .invH { font-weight: 800; } .gstH { font-weight: 800; } .gstsoldby { font-size: 15px; } .orderbox { font-family: "Inter", sans-serif; display: grid;
+            grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 15px; padding-top: 10px; border-top: 2px solid black; } .billheader { font-size: 13px; margin-top: 5px; }
+            .billkeyvalue { display: flex; align-items: center; justify-content: start; margin-top: 5px; } .spkey { font-size: 13px; font-weight: 700; } .spvalue { font-size: 13px;
+            padding-left: 5px; } .billaddress { font-size: 12px; } .productbox { font-family: "Inter", sans-serif; } .productbox table { border-collapse: collapse; width: 100%; }
+            .productbox table, .productbox td, .productbox th { border: 1px solid; padding: 4px; } .productbox th { font-size: 12px; } .productbox td { font-size: 12px; word-wrap:
+            normal; } .descriptiontd { text-align: start; width: 100%; } .footerBox { font-family: "Inter", sans-serif; } @page { size: 'A4'; margin-inline: 5px; margin-top:
+            20px;margin-bottom: 45px; @top-center { font-family: sans-serif; font-weight: bold; font-size: 2em; content: counter(page); } }
+        </style>
+    </head>
+    <body>
+        <div class="page">
+            <div style="display: flex; justify-content: space-between">
+                <div style="display: flex; height: 80px; max-height: 80px">
+                    <img src={{logo}} alt="" />
+                </div>
+                <h4 class="brandName">{{brandName}}</h4>
+            </div>
+            <div class="heading">Tax Invoice</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; border: 1px solid black; border-top: 0px">
+                <div class="sold-by-box" style="border-right: 1px solid black">
+                    <h4 class="soldbyheader">Sold By: {{soldBy}}</h4>
+                    <p class="address">
+                        <span style="font-weight: 800">Address:</span>
+                        {{soldByAddress}}
+                    </p>
+                    <p class="address">
+                        <span style="font-weight: 800">Phone:</span>
+                        {{soldByPhone}}
+                    </p>
+                    <div class="gstsoldby">
+                        <span class="gstH">GSTIN</span>
+                        <span> - {{soldByGst}}</span>
+                    </div>
+                </div>
+                <div class="sold-by-box">
+                    <div>
+                        <div>
+                            <span class="invH">Invoice Number</span>
+                            <span># {{invoiceNo}}</span>
+                        </div>
+                        <h4 class="billheader">Order ID: {{orderId}}</h4>
+                        <div class="billkeyvalue">
+                            <h4 class="spkey">Order Date:</h4>
+                            <span class="spvalue">{{orderDate}}</span>
+                        </div>
+                        <div class="billkeyvalue">
+                            <h4 class="spkey">Invoice Date:</h4>
+                            <span class="spvalue">{{invoiceDate}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="sold-by-box" style="border-right: 1px solid black; border-top: 1px solid black">
+                    <div style="display: flex; flex-direction: column">
+                        <h4 class="billheader">Bill To</h4>
+                        <h4 class="billheader">{{billToName}}</h4>
+                        <p class="billaddress">{{billToAddress}}</p>
+                        <span class="billaddress">Phone: {{billToPhone}}</span>
+                        <span class="billaddress">GSTIN: {{billToGST}}</span>
+                    </div>
+                </div>
+                <div class="sold-by-box" style="border-top: 1px solid black">
+                    <div style="display: flex; flex-direction: column">
+                        <h4 class="billheader">Ship To</h4>
+                        <h4 class="billheader">{{shipToName}}</h4>
+                        <p class="billaddress">{{shipToAddress}}</p>
+                        <span class="billaddress">Phone: {{shipToPhone}}</span>
+                        <span class="billaddress">GSTIN: {{shipToGST}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="productbox">
+                <table>
+                    <thead>
+                        <tr style="background-color: #d3d3d3">
+                            <th rowspan="2">SNo</th>
+                            <th rowspan="2">Description of goods</th>
+                            <th rowspan="2">HSN</th>
+                            <th rowspan="2">QTY</th>
+                            <th rowspan="2">Rate</th>
+                            <th rowspan="2">Total</th>
+                            <th colspan="2">CGST</th>
+                            <th colspan="2">SGST</th>
+                            <th colspan="2">IGST</th>
+                        </tr>
+                        <tr style="background-color: #d3d3d3">
+                            <th>Rate %</th>
+                            <th>Amount</th>
+                            <th>Rate %</th>
+                            <th>Amount</th>
+                            <th>Rate %</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each tableRow}}
+                            <tr>
+                                <td style="text-align: center">{{sno}}</td>
+                                <td class="descriptiontd">
+                                    <div style="display: flex; flex-direction: column;">
+                                        <span>
+                                            {{productName}}
+                                        </span>
+                                        <span> <span style="font-weight: 600;">Color:</span> {{color}} </span>
+                                        <span> <span style="font-weight: 600;">Set:</span>{{sizeSet}}</span>
+                                    </div>
+                                </td>
+                                <td style="text-align: center">{{hsnCode}}</td>
+                                <td style="text-align: center">{{qty}}</td>
+                                <td style="text-align: center">{{rate}}</td>
+                                <td style="text-align: center">{{total}}</td>
+                                <td style="text-align: center">{{cgstPercentage}}</td>
+                                <td style="text-align: center">{{cgstAmount}}</td>
+                                <td style="text-align: center">{{sgstPercentage}}</td>
+                                <td style="text-align: center">{{sgstAmount}}</td>
+                                <td style="text-align: center">{{igstPercentage}}</td>
+                                <td style="text-align: center">{{igstAmount}}</td>
+                            </tr>
+                        {{/each}}
+                        <tr style="background-color: #d3d3d3; font-weight: 600;">
+                            <td style="text-align: center"></td>
+                            <td style="text-align: center">Sub Total</td>
+                            <td style="text-align: center"></td>
+                            <td style="text-align: center"></td>
+                            <td style="text-align: center"></td>
+                            <td style="text-align: center">{{totalAmt}}</td>
+                            <td style="text-align: center"></td>
+                            <td style="text-align: center">{{totalCGSTAmt}}</td>
+                            <td style="text-align: center"></td>
+                            <td style="text-align: center">{{totalSGSTAmt}}</td>
+                            <td style="text-align: center"></td>
+                            <td style="text-align: center">{{totalIGSTAmt}}</td>
+                        </tr>
+                        <tr style="background-color: #ece3e3;">
+                            <td rowspan="5" colspan="7" style="text-align:center; font-size: 20px; font-weight: bold;">Grand Total</td>
+                            <td colspan="3" style="text-align: start; padding-top: 20px;">Taxable Amount</td>
+                            <td colspan="2" style="text-align: end;  padding-top: 20px; font-weight: bold;">{{taxableAmt}}</td>
+                        </tr>
+                        <tr style="background-color: #ece3e3;">
+                            <td colspan="3" style="text-align: start;">Total Tax</td>
+                            <td colspan="2" style="text-align: end; font-weight: bold;">{{totalTaxAmt}}</td>
+                        </tr>
+                        <tr style="background-color: #ece3e3;">
+                            <td colspan="3" style="text-align: start;">Gross Total</td>
+                            <td colspan="2" style="text-align: end; font-weight: bold;">{{grossTotalAmt}}</td>
+                        </tr>
+                        <tr style="background-color: #ece3e3;">
+                            <td colspan="3" style="text-align: start;">Discount</td>
+                            <td colspan="2" style="text-align: end; font-weight: bold;">{{discountAmt}}</td>
+                        </tr>
+                        <tr style="background-color: #ece3e3;">
+                            <td colspan="2" style="text-align: start; font-weight: bold;">Net Amount</td>
+                            <td colspan="3" style="text-align:end; font-size: 20px; font-weight: bold;">₹ {{netPayableAmount}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="footerBox" style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; margin-top: 50px; gap: 10px">
+                <div style="grid-column-start: 1; grid-column-end: 4">
+                    <h4>Terms & Conditions</h4>
+                    <ul style="margin: 0; font-size: 12px">
+                        <li>Lorem ipsum dolor sit amet consectetur adipisicing</li>
+                        <li>Lorem ipsum dolor sit amet consectetur adipisicing</li>
+                        <li>Lorem ipsum dolor sit amet consectetur adipisicing</li>
+                        <li>Lorem ipsum dolor sit amet consectetur adipisicing</li>
+                        <li>Lorem ipsum dolor sit amet consectetur adipisicing</li>
+                    </ul>
+                </div>
+                <div style="text-align: center; grid-column-start: 4; grid-column-end: 6">
+                    <h3>Authorized Singnature</h3>
+                    <div style="height: 70px; border: 1px solid black; margin-top: 10px"></div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
