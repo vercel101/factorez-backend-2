@@ -703,69 +703,6 @@ const bulkOrderProcess = async (req, res) => {
         let { orderIds } = req.body;
         // let const records = await Model.find({ '_id': { $in: ids } });
         let orders = await orderModel.find({ _id: { $in: orderIds } }).populate(["ordered_products", "order_status_id"]);
-
-        let payment = await paymentModel.findById(order.payment_id._id);
-        if (!payment) {
-            return res.status(400).send({ status: false, message: "Bad request" });
-        }
-        let orderType = "CONFIRMED";
-        // if (orderType === "CONFIRMED") {
-        //     order.order_status_id.status = orderType;
-        //     payment.order_status = "CONFIRMED";
-        //     let updatedByObj = {};
-        //     if (req.userModel === "VENDOR") {
-        //         updatedByObj.vendor = req.userId;
-        //     } else if (req.userModel === "ADMIN") {
-        //         updatedByObj.admin = req.userId;
-        //     }
-        //     let statusObj = {
-        //         status: orderType,
-        //         updatedBy: updatedByObj,
-        //         updatedAt: new Date(),
-        //     };
-        //     order.order_status_id.statusList.push(statusObj);
-        //     await order.order_status_id.save();
-        //     let purchaseGstAmount = 0;
-        //     let purchaseTotalAmount = 0;
-        //     for (let singleOrderProduct of order.ordered_products.products) {
-        //         purchaseGstAmount += (singleOrderProduct.seller_price * singleOrderProduct.qty * singleOrderProduct.seller_gst) / 100;
-        //         purchaseTotalAmount += singleOrderProduct.seller_price * singleOrderProduct.qty;
-        //     }
-
-        //     let invDataPurchase = {
-        //         vendor_id: order.vendorId,
-        //         order_id: order._id,
-        //         gstAmount: purchaseGstAmount,
-        //         totalAmount: purchaseTotalAmount,
-        //     };
-        //     let invDataSale = {
-        //         customer_id: order.customer_id,
-        //         order_id: order._id,
-        //         gstAmount: order.GST_amount,
-        //         totalAmount: order.total,
-        //         address: order.shipping_address,
-        //     };
-        //     let resData = await generatePurchaseInvoice(invDataPurchase);
-        //     let resData2 = await generateSaleInvoice(invDataSale);
-        //     if (resData.status) {
-        //         order.purchaseInvoice = resData.invoice._id;
-        //     } else {
-        //         return res.status(400).send({
-        //             status: false,
-        //             message: resData.err,
-        //         });
-        //     }
-        //     if (resData2.status) {
-        //         order.saleInvoice = resData2.invoice._id;
-        //     } else {
-        //         return res.status(400).send({
-        //             status: false,
-        //             message: resData2.err,
-        //         });
-        //     }
-        // }
-        // await payment.save();
-        // await order.save();
         res.status(202).send({ status: true, data: orders, message: "Orders Processed" });
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message });
