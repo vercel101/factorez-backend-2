@@ -3,6 +3,7 @@ const vendorModel = require("../models/vendorModel");
 const { isValid } = require("../utils/utils");
 const { isValidObjectId } = require("mongoose");
 const productModel = require("../models/productModel");
+const { uploadFile } = require("./imageController");
 // ADD BRAND DETAILS
 const addBrand = async (req, res) => {
     try {
