@@ -17,5 +17,6 @@ router.post("/getordersbycustomerphone", Authentication, customerController.find
 router.post("/addaddress/:customerId", AuthenticationCustomer, customerAddressController.addAddress);
 router.get("/getalladdress/:customerId", AuthenticationCustomer, customerAddressController.getAllAddresses);
 router.put("/setdefaultaddress/:customerId/:addressId", AuthenticationCustomer, customerController.setDefaultAddress);
+router.post("/change-password/:customerId", Authentication, customerController.changePassword);
 
 module.exports = router;

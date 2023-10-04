@@ -249,6 +249,29 @@ const setDefaultAddress = async (req, res) => {
     }
 };
 
+const changePassword = async (req, res) => {
+    try {
+        let customerId = req.params.customerId;
+        let { password } = req.body;
+        if (!password) {
+            return res.status(400).send({ status: false, message: "Password is required" });
+        }
+        if (!isValidObjectId(customerId)) {
+            return res.status(400).send({ status: false, message: "Invalid Customer id" });
+        }
+        let customer = await customerModel.findById(customerId);
+        if (!customer) {
+            return res.status(404).send({ status: false, message: "Customer not found with this id" });
+        }
+        let hashedPassword = await bcrypt.hash(password, 10);
+        customer.password = hashedPassword;
+        await customer.save();
+        return res.status(202).send({ status: true, message: "Password Updated" });
+    } catch (error) {
+        return res.status(500).send({ status: false, message: error.message });
+    }
+};
+
 module.exports = {
     loginUser,
     getAllCustomer,
@@ -258,4 +281,5 @@ module.exports = {
     blockCustomerById,
     findOrdersByPhone,
     setDefaultAddress,
+    changePassword,
 };

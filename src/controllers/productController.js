@@ -106,32 +106,6 @@ const addProduct = async (req, res) => {
             return res.status(400).send({ status: false, message: "Product color is required" });
         }
 
-        if (!isValid(sole)) {
-            return res.status(400).send({
-                status: false,
-                message: "Sole material type is required",
-            });
-        }
-
-        if (!isValid(material)) {
-            return res.status(400).send({ status: false, message: "Upper material is required" });
-        }
-
-        if (!isValid(min_order_qty)) {
-            return res.status(400).send({
-                status: false,
-                message: "Minimum order quantity is required",
-            });
-        }
-
-        if (!isValid(packing_type)) {
-            return res.status(400).send({ status: false, message: "Packing type is required" });
-        }
-
-        if (!isValid(made_in)) {
-            return res.status(400).send({ status: false, message: "Made in is required" });
-        }
-
         if (req.userModel === "ADMIN") {
             if (!isValid(sellingGST)) {
                 return res.status(400).send({

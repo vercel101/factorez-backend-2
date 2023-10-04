@@ -37,7 +37,6 @@ const productSchema = new mongoose.Schema(
 
         seller_price: {
             type: Number,
-            required: true,
         },
         sellingGST: {
             type: Number,
@@ -54,14 +53,10 @@ const productSchema = new mongoose.Schema(
 
         qty_in_hand: {
             type: Number,
-            required: true,
-            trim: true,
         },
 
         min_order_qty: {
             type: Number,
-            required: true,
-            trim: true,
         },
         lotSizeQty: [
             {
@@ -78,30 +73,29 @@ const productSchema = new mongoose.Schema(
         ],
         sole: {
             type: String,
-            required: true,
             trim: true,
+            default:""
         },
 
         material: {
             type: String,
-            required: true,
             trim: true,
+            default:""
         },
         packing_type: {
             type: String,
-            required: true,
             trim: true,
+            default:""
         },
 
         made_in: {
             type: String,
-            required: true,
             trim: true,
+            default:"India"
         },
 
         weight: {
             type: Number,
-            trim: true,
         },
 
         categoryId: {
