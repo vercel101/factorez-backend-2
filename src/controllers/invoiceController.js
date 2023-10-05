@@ -475,7 +475,7 @@ const downoadInvoiceByInvoiceNumber = async (req, res) => {
         }
         if (invoicetype === "PURCHASE") {
             let invData = {
-                logo: business[0].business_Logo,
+                logo: business[0].invoiceLogo,
                 brandName: business[0].business_name,
                 soldBy: invoice.soldBy.name,
                 soldByAddress: invoice.soldBy.address,
@@ -589,7 +589,7 @@ const downoadInvoiceByInvoiceNumber = async (req, res) => {
         } else {
             let customerAddress = await customerAddressModel.findOne({ customerId: invoice.customer_id });
             let invData = {
-                logo: business[0].business_Logo,
+                logo: business[0].invoiceLogo,
                 brandName: business[0].business_name,
                 soldBy: invoice.soldBy.name,
                 soldByAddress: invoice.soldBy.address,

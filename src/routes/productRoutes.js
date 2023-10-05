@@ -9,12 +9,12 @@ const { exportIDs, exportProductAddDemoSheet, csvToJson } = require("../controll
 
 // PRODUCT ROUTES
 router.post("/product", Authentication, productController.addProduct);
-router.get("/products", Authentication, AllProductRole, productController.getAllProducts);
+router.get("/products", Authentication, productController.getAllProducts);
 router.get("/allproducts", Authentication, productController.getAllProductsForFilter);
 router.get("/dashboardproduct", AuthenticationCustomer, productController.getAllProductsForDashboard);
 router.get("/product/:productId", productController.getProductById);
-router.patch("/changeproductstatus/:productId", Authentication, verifyProudct, productController.changeProductStatus);
-router.patch("/changeproductstockstatus/:productId", Authentication, outOfStockProduct, productController.changeProductStockStatus);
+router.patch("/changeproductstatus/:productId", Authentication, productController.changeProductStatus);
+router.patch("/changeproductstockstatus/:productId", Authentication, productController.changeProductStockStatus);
 router.put("/updateproduct/:productId", Authentication, productController.updateProduct);
 
 // router.post("/csvupload", productController.csvProduct);
