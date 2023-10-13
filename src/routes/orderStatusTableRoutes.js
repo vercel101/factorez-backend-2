@@ -4,10 +4,7 @@ const orderStatusTableController = require("../controllers/orderStatusTableContr
 
 const { Authentication } = require("../middlewares/auth");
 
-router.post(
-    "/change-order-status/:orderId",
-    Authentication,
-    orderStatusTableController.updateOrderStatusByOrderId
-);
+router.post("/change-order-status/:orderId", Authentication, orderStatusTableController.updateOrderStatusByOrderId);
+router.post("/change-bulk-order-status", Authentication, orderStatusTableController.bulkOrderProcess);
 
 module.exports = router;

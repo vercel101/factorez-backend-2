@@ -698,16 +698,7 @@ const getAllCancelledOrder = async (req, res) => {
     }
 };
 
-const bulkOrderProcess = async (req, res) => {
-    try {
-        let { orderIds } = req.body;
-        // let const records = await Model.find({ '_id': { $in: ids } });
-        let orders = await orderModel.find({ _id: { $in: orderIds } }).populate(["ordered_products", "order_status_id"]);
-        res.status(202).send({ status: true, data: orders, message: "Orders Processed" });
-    } catch (error) {
-        return res.status(500).send({ status: false, message: error.message });
-    }
-};
+
 
 module.exports = {
     createOrder,
@@ -719,5 +710,4 @@ module.exports = {
     getOrderedProduct,
     patchTrackingIdByOrderId,
     getAllCancelledOrder,
-    bulkOrderProcess,
 };

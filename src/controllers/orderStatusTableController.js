@@ -8,9 +8,7 @@ const createOrderStatusTable = async (req, res) => {
     try {
         let orderId = req.params.orderId;
         if (!isValidObjectId(orderId)) {
-            return res
-                .status(400)
-                .send({ status: false, message: "Invalid Order Id" });
+            return res.status(400).send({ status: false, message: "Invalid Order Id" });
         }
 
         let order = await orderModel.findOne({ _id: orderId });
@@ -26,11 +24,7 @@ const createOrderStatusTable = async (req, res) => {
 
         let { questions, customerAnswer } = data;
 
-        let orderStatus = await orderModel.findOneAndUpdate(
-            { _id: orderId },
-            { $set: { Status: "Cancelled" } },
-            { new: true }
-        );
+        let orderStatus = await orderModel.findOneAndUpdate({ _id: orderId }, { $set: { Status: "Cancelled" } }, { new: true });
 
         await order.save();
 
@@ -39,9 +33,7 @@ const createOrderStatusTable = async (req, res) => {
             customerAnswer,
         };
 
-        let newCancelledReason = await cancelledReasonModel.create(
-            cancelledReasonData
-        );
+        let newCancelledReason = await cancelledReasonModel.create(cancelledReasonData);
 
         let cancelledObj = {
             cancelledBy: req.body.cancelledBy,
@@ -73,9 +65,7 @@ const createOrderStatusTable = async (req, res) => {
 const getAllOrderStatusTables = async (req, res) => {
     try {
         let allOrderStatusTables = await orderStatusTableModel.find();
-        return res
-            .status(200)
-            .send({ status: true, data: allOrderStatusTables });
+        return res.status(200).send({ status: true, data: allOrderStatusTables });
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message });
     }
@@ -116,9 +106,7 @@ const updateOrderStatusByOrderId = async (req, res) => {
         let orderId = req.params.orderId;
         let { status } = req.body;
         if (!isValidObjectId(orderId)) {
-            return res
-                .status(400)
-                .send({ status: false, message: "Invalid order id" });
+            return res.status(400).send({ status: false, message: "Invalid order id" });
         }
 
         let orderStatusTable = await orderStatusTableModel.findOne({
@@ -132,9 +120,7 @@ const updateOrderStatusByOrderId = async (req, res) => {
             });
         }
         if (!status) {
-            return res
-                .status(400)
-                .send({ status: false, message: "Bad request" });
+            return res.status(400).send({ status: false, message: "Bad request" });
         }
         orderStatusTable.status = status;
 
@@ -151,9 +137,37 @@ const updateOrderStatusByOrderId = async (req, res) => {
         };
         orderStatusTable.statusList.push(statusObj);
         await orderStatusTable.save();
-        return res
-            .status(202)
-            .send({ status: true, message: "Success", data: orderStatusTable });
+        return res.status(202).send({ status: true, message: "Success", data: orderStatusTable });
+    } catch (error) {
+        return res.status(500).send({ status: false, message: error.message });
+    }
+};
+
+const bulkOrderProcess = async (req, res) => {
+    try {
+        let { status, orderIds } = req.body;
+        // let const records = await Model.find({ '_id': { $in: ids } });
+
+        let orderStatusTables = await orderStatusTableModel.find({ order_id: { $in: orderIds } });
+        let updatedByObj = {};
+        if (req.userModel === "VENDOR") {
+            updatedByObj.vendor = req.userId;
+        } else if (req.userModel === "ADMIN") {
+            updatedByObj.admin = req.userId;
+        }
+        let statusObj = {
+            status: status,
+            updatedBy: updatedByObj,
+            updatedAt: new Date(),
+        };
+        for await (let orderStatusTable of orderStatusTables) {
+            if (orderStatusTable.status !== "CANCELLED" && orderStatusTable.status !== "PENDING") {
+                orderStatusTable.status = status;
+                orderStatusTable.statusList.push(statusObj);
+                await orderStatusTable.save();
+            }
+        }
+        res.status(202).send({ status: true, message: "Orders Processed" });
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message });
     }
@@ -164,4 +178,5 @@ module.exports = {
     getAllOrderStatusTables,
     getOrderStatusTableById,
     updateOrderStatusByOrderId,
+    bulkOrderProcess,
 };
