@@ -11,7 +11,20 @@ const orderStatusTableSchema = new mongoose.Schema(
 
         status: {
             type: String,
-            enum: ["PENDING", "CONFIRMED", "PARTIAL_CONFIRMED", "READY_TO_DISPATCH", "PICKUP_ALIGNED", "PICKUP_DONE", "RETURNED","RETURNED_RTO","RETURNED_RTO_DELIVERED", "DELIVERED", "CANCELLED", "OUT_FOR_DELIVERY"],
+            enum: [
+                "PENDING",
+                "CONFIRMED",
+                "PARTIAL_CONFIRMED",
+                "READY_TO_DISPATCH",
+                "PICKUP_ALIGNED",
+                "PICKUP_DONE",
+                "RETURNED",
+                "RETURNED_RTO",
+                "RETURNED_RTO_DELIVERED",
+                "DELIVERED",
+                "CANCELLED",
+                "OUT_FOR_DELIVERY",
+            ],
             default: "PENDING",
         },
 
@@ -24,7 +37,18 @@ const orderStatusTableSchema = new mongoose.Schema(
             {
                 status: {
                     type: String,
-                    enum: ["CONFIRMED", "PARTIAL_CONFIRMED", "READY_TO_DISPATCH", "PICKUP_ALIGNED", "PICKUP_DONE", "RETURNED","RETURNED_RTO","RETURNED_RTO_DELIVERED", "DELIVERED", "OUT_FOR_DELIVERY"],
+                    enum: [
+                        "CONFIRMED",
+                        "PARTIAL_CONFIRMED",
+                        "READY_TO_DISPATCH",
+                        "PICKUP_ALIGNED",
+                        "PICKUP_DONE",
+                        "RETURNED",
+                        "RETURNED_RTO",
+                        "RETURNED_RTO_DELIVERED",
+                        "DELIVERED",
+                        "OUT_FOR_DELIVERY",
+                    ],
                 },
                 updatedBy: {
                     vendor: { type: ObjectId, ref: "Vendor" },
@@ -32,9 +56,6 @@ const orderStatusTableSchema = new mongoose.Schema(
                 },
                 updatedAt: {
                     type: Date,
-                },
-                description: {
-                    type: String,
                 },
             },
         ],
@@ -58,6 +79,26 @@ const orderStatusTableSchema = new mongoose.Schema(
                 type: String,
             },
         },
+        cancelledStatus: {
+            type: String,
+            enum: ["PICKUP_ALIGNED", "PICKUP_DONE", "RETURNED", "RETURNED_RTO", "RETURNED_RTO_DELIVERED", "CANCELLED"],
+        },
+        cancelledStatusList: [
+            {
+                status: {
+                    type: String,
+                    enum: ["PICKUP_ALIGNED", "PICKUP_DONE", "RETURNED", "RETURNED_RTO", "RETURNED_RTO_DELIVERED", "CANCELLED"],
+                },
+                updatedBy: {
+                    vendor: { type: ObjectId, ref: "Vendor" },
+                    admin: { type: ObjectId, ref: "Admin" },
+                    customer: { type: ObjectId, ref: "Customer" },
+                },
+                updatedAt: {
+                    type: Date,
+                },
+            },
+        ],
     },
     { timestamps: true }
 );

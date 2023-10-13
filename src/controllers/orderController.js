@@ -542,6 +542,13 @@ const updateOrderByOrderId = async (req, res) => {
             order.order_status_id.cancelled.userId = updatedByObj;
             order.order_status_id.cancelled.question = questionId;
             order.order_status_id.cancelled.description = cancelMessage;
+            order.order_status_id.cancelledStatus = "CANCELLED";
+            let objOfCancelledStatusList = {
+                status: "CANCELLED",
+                updatedBy: updatedByObj,
+                updatedAt: new Date(),
+            };
+            order.order_status_id.cancelledStatusList.push(objOfCancelledStatusList);
             if (payment.payment_mode === "CUSTOM" || payment.payment_mode === "PREPAID" || payment.payment_mode === "TWENTY_ADV") {
                 if (payment.payment_mode === "CUSTOM") {
                     payment.return_amount = Number(payment.partial_payment.payment_amount) + Number(payment.cod_received);
@@ -697,8 +704,6 @@ const getAllCancelledOrder = async (req, res) => {
         return res.status(500).send({ status: false, message: error.message });
     }
 };
-
-
 
 module.exports = {
     createOrder,

@@ -167,7 +167,50 @@ const bulkOrderProcess = async (req, res) => {
                 await orderStatusTable.save();
             }
         }
-        res.status(202).send({ status: true, message: "Orders Processed" });
+        return res.status(202).send({ status: true, message: "Orders Processed" });
+    } catch (error) {
+        return res.status(500).send({ status: false, message: error.message });
+    }
+};
+
+const cancelOrderReturnById = async (req, res) => {
+    try {
+        let orderId = req.params.orderId;
+        let { status } = req.body;
+        if (!isValidObjectId(orderId)) {
+            return res.status(400).send({ status: false, message: "Invalid order id" });
+        }
+
+        let orderStatusTable = await orderStatusTableModel.findOne({
+            order_id: orderId,
+        });
+
+        if (!orderStatusTable) {
+            return res.status(404).send({
+                status: false,
+                message: "Order status table not found",
+            });
+        }
+        if (!status) {
+            return res.status(400).send({ status: false, message: "Bad request" });
+        }
+        orderStatusTable.cancelledStatus = status;
+        let updatedByObj = {};
+        if (req.userModel === "VENDOR") {
+            updatedByObj.vendor = req.userId;
+        } else if (req.userModel === "ADMIN") {
+            updatedByObj.admin = req.userId;
+        } else {
+            updatedByObj.customer = req.userId;
+        }
+        let objOfCancelledStatusList = {
+            status: status,
+            updatedBy: updatedByObj,
+            updatedAt: new Date(),
+        };
+        orderStatusTable.cancelledStatusList.push(objOfCancelledStatusList);
+        await orderStatusTable.save();
+        return res.status(202).send({ status: true, message: "Return Status Updated" });
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message });
     }
@@ -179,4 +222,5 @@ module.exports = {
     getOrderStatusTableById,
     updateOrderStatusByOrderId,
     bulkOrderProcess,
+    cancelOrderReturnById
 };
