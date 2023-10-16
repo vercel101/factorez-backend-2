@@ -27,6 +27,7 @@ const orderStatusRoute = require("./src/routes/orderStatusTableRoutes");
 const profileRoutes = require("./src/routes/profileRoutes");
 const reportRoutes = require("./src/routes/reportRoutes");
 const dashboardRoutes = require("./src/routes/dashboardRoutes");
+const wishlistRoutes = require("./src/routes/wishlistRoutes");
 const { mongoDbUrl, port } = require("./src/middlewares/config");
 
 app.use(express.json());
@@ -60,9 +61,10 @@ app.use("/", orderStatusRoute);
 app.use("/", profileRoutes);
 app.use("/", reportRoutes);
 app.use("/", dashboardRoutes);
+app.use("/", wishlistRoutes);
 
 app.get("/", (req, res) => {
-    res.send("<h1>shoecom backend deployed successfully</h1>");
+    res.send("<h1>factorez.com backend deployed successfully</h1>");
 });
 
 app.listen(port, () => console.log(`Server is up and running on port: ${port}`));

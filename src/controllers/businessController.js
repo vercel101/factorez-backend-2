@@ -1,6 +1,7 @@
 const businessModel = require("../models/businessModel");
 const { isValid } = require("../utils/utils");
-const { uploadFile } = require("./imageController");
+const { uploadFile, uploadImage } = require("./imageController");
+const bannerModel = require("../models/bannerModel");
 
 // ADD BUSINESS DETAILS
 const addBusinessInfo = async (req, res) => {
@@ -140,6 +141,46 @@ const saveSocialMedia = async (req, res) => {
     }
 };
 
+const bannerForClientPage = async (req, res) => {
+    try {
+        let { images } = req.files;
+        let { type } = req.body;
+        if (images && type) {
+            if (type === "MULTIPLE") {
+                for await (let x of images) {
+                    let url = (await uploadImage(x)).imageURL;
+                    await bannerModel.create({ bannerUrl: url, type: "MULTIPLE" });
+                }
+            } else if (type === "SINGLE") {
+                let url = (await uploadImage(images)).imageURL;
+                await bannerModel.create({ bannerUrl: url, type: "SINGLE" });
+            }
+        }
+        return res.status(200).send({ status: true, message: "Banner added" });
+    } catch (error) {
+        return res.status(500).send({ status: false, message: error.message });
+    }
+};
+
+const getBannerForClientPage = async (req, res) => {
+    try {
+        let data = await bannerModel.find();
+        return res.status(200).send({ status: true, data: data, message: "Banner Images fetched" });
+    } catch (error) {
+        return res.status(500).send({ status: false, message: error.message });
+    }
+};
+
+const bannerDeleteById = async (req, res) => {
+    try {
+        let bannerId = req.params.bannerId;
+        await bannerModel.findByIdAndDelete(bannerId);
+        return res.status(200).send({ status: true, message: "Banner deleted successfully" });
+    } catch (error) {
+        return res.status(500).send({ status: false, message: error.message });
+    }
+};
+
 module.exports = {
     addBusinessInfo,
     addBusinessGST,
@@ -147,4 +188,7 @@ module.exports = {
     addBusinessFiles,
     setDefaultGst,
     saveSocialMedia,
+    bannerForClientPage,
+    getBannerForClientPage,
+    bannerDeleteById
 };

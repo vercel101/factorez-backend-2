@@ -6,6 +6,7 @@ const { isValid, isValidMoblie, isValidEmail, isValidPassword } = require("../ut
 const { customerTokenSecretKey } = require("../middlewares/config");
 const { isValidObjectId } = require("mongoose");
 const customerAddressModel = require("../models/customerAddressModel");
+const wishlistModel = require("../models/wishlistModel");
 
 const loginUser = async (req, res) => {
     try {
@@ -20,6 +21,7 @@ const loginUser = async (req, res) => {
         if (!customer) {
             return res.status(404).send({ status: false, message: "Account not found this mobile number, you have to register first" });
         }
+        let wishlist = await wishlistModel.find({ userId: customer._id });
         if (customer.isBlocked) {
             return res.status(403).send({ status: false, message: "This account has been blocked, Please Contact us!" });
         }
@@ -44,6 +46,7 @@ const loginUser = async (req, res) => {
                     isActivated: customer.isActivated,
                     phone: customer.phone,
                     cartLength: customer.cart_id.products.length,
+                    wishlistLength: wishlist.length,
                 };
                 if (customer.profileUrl) data.photo = customer.profileUrl;
                 if (customer.alternate_phone) data.altMobileNo = customer.alternate_phone;
