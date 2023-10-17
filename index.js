@@ -28,6 +28,7 @@ const profileRoutes = require("./src/routes/profileRoutes");
 const reportRoutes = require("./src/routes/reportRoutes");
 const dashboardRoutes = require("./src/routes/dashboardRoutes");
 const wishlistRoutes = require("./src/routes/wishlistRoutes");
+const adminDashboardRoute = require("./src/routes/adminDashboardRoute");
 const { mongoDbUrl, port } = require("./src/middlewares/config");
 
 app.use(express.json());
@@ -62,6 +63,7 @@ app.use("/", profileRoutes);
 app.use("/", reportRoutes);
 app.use("/", dashboardRoutes);
 app.use("/", wishlistRoutes);
+app.use("/", adminDashboardRoute);
 
 app.get("/", (req, res) => {
     res.send("<h1>factorez.com backend deployed successfully</h1>");
