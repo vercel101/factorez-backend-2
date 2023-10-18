@@ -48,6 +48,7 @@ const getDashboardData = async (req, res) => {
         let thisYearSale = 0;
         let thisMonthSale = 0;
         let thisWeekSale = 0;
+        let overAllSale = 0;
         let todaySale = 0;
         for (let x of products) {
             if (x.vendor_id.isActive === "Active") {
@@ -88,6 +89,9 @@ const getDashboardData = async (req, res) => {
                     thisYearSale += x.grand_total;
                 }
             }
+            if (x.order_status_id.status !== "PENDING" && x.order_status_id.status !== "CANCELLED") {
+                overAllSale += x.grand_total;
+            }
             orderCount++;
         }
 
@@ -103,6 +107,7 @@ const getDashboardData = async (req, res) => {
             thisMonthSale,
             thisWeekSale,
             todaySale,
+            overAllSale,
             overallOrder: orderCount,
         };
         return res.status(200).send({ status: true, data: { ...data }, message: "Dashboard data fetched" });
