@@ -3,7 +3,7 @@ const { sendOTP, verityOTP, forgetPasswordUsingOtp } = require("../controllers/o
 const { sentOTP, verifyOTP } = require('../controllers/OTP');
 const router = express.Router();
 
-router.get("/sendotp/:phone", sendOTP);
+// router.get("/sendotp/:phone", sendOTP);
 router.get("/verifyotp/:phone/:otpCode", verityOTP);
 router.post("/forget-password/:phone/:otpCode", forgetPasswordUsingOtp);
 
