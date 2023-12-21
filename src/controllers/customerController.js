@@ -25,9 +25,7 @@ const loginUser = async (req, res) => {
         if (customer.isBlocked) {
             return res.status(403).send({ status: false, message: "This account has been blocked, Please Contact us!" });
         }
-        // if (!customer.isActivated) {
-        //     return res.status(200).send({ status: true, message: "Account is not active, Please fill your information" });
-        // }
+        
         bcrypt.compare(password, customer.password, function (err, result) {
             if (err) {
                 return res.status(400).send({ status: false, message: err.message });
